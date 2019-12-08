@@ -6,11 +6,10 @@ using namespace std;
 
 class Operation {
 	public:
-		Operation(string x, string y) : str_x(x), str_y(y) {
-			res = "";
-		};
+		Operation(string x, string y) : str_x(x), str_y(y) {}
 		string add();
 		string subtract();
+		string multiply(); 
 	private:
 		string str_x;
 		string str_y;
@@ -260,4 +259,122 @@ string Operation::subtract() {
 	return result;
 }
 
+
+string Operation::multiply() {
+	//参考博客：https://blog.csdn.net/weixin_41376979/article/details/79197186
+	res = "";
+	int lx = str_x.size(), lenx = 0;
+	int ly = str_y.size(), leny = 0;
+	int limit = lx + ly;  //多加10位，以防超出 
+	int len = 0; //取lx和ly的最大长
+	int r = 0;
+	int flag1 = 0; //str_x是否为负数，0正，1负
+	int flag2 = 0; //str_y是否为负数，0正，1负
+	vector<int> nx(limit, 0), ny(limit, 0), nr(2 * limit, 0);
+	
+	if(str_x[0] == '-') { //x为负数
+		flag1 = 1; 
+		//除负号外倒叙存放在nx中
+		//负数长度多一个符号位，需减掉这个符号位数再进行存储
+		//此处应lx - 1 - 1，一个1是索引从0开始，另一个为符号位数 
+		lenx = lx - 1;
+		for(int i = lx - 2, k = 1; i >= 0 && k < lx; -- i) {
+			nx[i] = (str_x[k] - '0');
+			//cout << "nx " << str_x[k] << endl;
+			k ++;
+		}
+	} else { //x为正数
+		lenx = lx;
+		for(int i = lx - 1, k = 0; i >= 0 && k < lx; -- i) {
+			nx[i] = (str_x[k] - '0');
+			k ++;
+		}
+	}
+	if(str_y[0] == '-') { //y为负数
+		flag2 = 1;
+		//除负号外倒叙存放ny中
+		//负数长度多一个符号位，需减掉这个符号位数再进行存储
+		//此处应lx - 1 - 1，一个1是索引从0开始，另一个为符号位数 
+		leny = ly - 1;
+		for(int i = ly - 2, k = 1; i >= 0 && k < ly; -- i) {
+			ny[i] = (str_y[k] - '0');
+			k ++;
+		}
+	} else { //y为正数
+		leny = ly;
+		for(int i = ly - 1, k = 0; i >= 0 && k < ly; -- i) {
+			ny[i] = (str_y[k] - '0');
+			k ++;
+		}
+	}
+	
+	//进行乘运算 
+	//将结果保存在nr 
+	for(int i = 0; i < lenx; i ++) {
+		for(int j = 0; j < leny; j ++) {
+			nr[i + j] += nx[i] * ny[j];
+		}
+	}
+	//进位运算
+	for(int i = 0; i < 2 * limit; i ++) {
+		if(nr[i] > 9) {
+			nr[i + 1] += nr[i] / 10;
+			nr[i] %= 10;
+		}
+	} 
+	//x和y都为正数 
+	if(flag1 == 0 && flag2 == 0) {
+		for(r = 2 * limit - 1; r >= 0; -- r) {
+			if(nr[r]) {
+				break;
+			}
+		}
+		while(r >= 0) {
+			res += to_string(nr[r]);
+			r --;
+		}
+		return res;
+	}
+	//x和y都为负数
+	if(flag1 == 1 && flag2 == 1) {
+		for(r = 2 * limit - 1; r >= 0; -- r) {
+			if(nr[r]) {
+				break;
+			}
+		}
+		while(r >= 0) {
+			res += to_string(nr[r]);
+			r --;
+		}
+		return res;
+	} 
+	//x为负数，y为正数
+	if(flag1 == 1 && flag2 == 0) {
+		for(r = 2 * limit - 1; r >= 0; -- r) {
+			if(nr[r]) {
+				break;
+			}
+		}
+		res += "-";
+		while(r >= 0) {
+			res += to_string(nr[r]);
+			r --;
+		}
+		return res;
+	} 
+	//x为正数，y为负数 
+	if(flag1 == 0 && flag2 == 1) {
+		for(r = 2 * limit - 1; r >= 0; -- r) {
+			if(nr[r]) {
+				break;
+			}
+		}
+		res += "-";
+		while(r >= 0) {
+			res += to_string(nr[r]);
+			r --;
+		}
+		return res;
+	} 
+}
 
