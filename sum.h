@@ -10,10 +10,12 @@ class Operation {
 		string add();
 		string subtract();
 		string multiply(); 
+		string division(); 
 	private:
 		string str_x;
 		string str_y;
 		string res;
+		bool isAbsBig(int lx, vector<int> nx, int ly, vector<int> ny);
 };
 
 string Operation::add() {
@@ -377,4 +379,79 @@ string Operation::multiply() {
 		return res;
 	} 
 }
+
+
+//如果被除数的绝对值大于除数的绝对值返回true,否则，返回false 
+bool Operation::isAbsBig(int lenx, vector<int> nx, int leny, vector<int> ny) {
+	if(lenx < leny) {
+		return false;
+	} else if(lenx > leny) {
+		return true;
+	} else {
+		for(int i = lenx - 1; i >= 0; i --) {
+			if(nx[i] < ny[i]) {
+				return false;
+			}
+		}
+		return true;
+	}
+}
+//待完善。。。。 
+//不断进行减法，但需优化减法的次数 
+/*string Operation::division() {
+	res = "";
+	int lx = str_x.size(), lenx = 0;
+	int ly = str_y.size(), leny = 0;
+	int limit = lx + ly;   
+	int r = 0;
+	int flag1 = 0; //str_x是否为负数，0正，1负
+	int flag2 = 0; //str_y是否为负数，0正，1负
+	vector<int> nx(limit, 0), ny(limit, 0), nr(limit, 0);
+	string x1 = "", x2 = "", z = "";
+	
+	if(str_x[0] == '-') { //x为负数
+		flag1 = 1; 
+		//除负号外倒叙存放在nx中
+		//负数长度多一个符号位，需减掉这个符号位数再进行存储
+		//此处应lx - 1 - 1，一个1是索引从0开始，另一个为符号位数 
+		lenx = lx - 1;
+		for(int i = lx - 2, k = 1; i >= 0 && k < lx; -- i) {
+			nx[i] = (str_x[k] - '0');
+			//cout << "nx " << str_x[k] << endl;
+			k ++;
+		}
+	} else { //x为正数
+		lenx = lx;
+		for(int i = lx - 1, k = 0; i >= 0 && k < lx; -- i) {
+			nx[i] = (str_x[k] - '0');
+			k ++;
+		}
+	}
+	if(str_y[0] == '-') { //y为负数
+		flag2 = 1;
+		//除负号外倒叙存放ny中
+		//负数长度多一个符号位，需减掉这个符号位数再进行存储
+		//此处应lx - 1 - 1，一个1是索引从0开始，另一个为符号位数 
+		leny = ly - 1;
+		for(int i = ly - 2, k = 1; i >= 0 && k < ly; -- i) {
+			ny[i] = (str_y[k] - '0');
+			k ++;
+		}
+	} else { //y为正数
+		leny = ly;
+		for(int i = ly - 1, k = 0; i >= 0 && k < ly; -- i) {
+			ny[i] = (str_y[k] - '0');
+			k ++;
+		}
+	}
+	
+	//如果x < y，则返回0;否则，进行除法运算 
+	if(!isAbsBig(lenx, nx, leny, ny)) {
+		return 0;
+	} else {
+		while()
+	} 
+}*/ 
+
+
 
